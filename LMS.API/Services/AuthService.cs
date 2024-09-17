@@ -28,7 +28,6 @@ public class AuthService : IAuthService
         JwtSecurityToken tokenOptions = GenerateTokenOptions(signing, claims);
 
         ArgumentNullException.ThrowIfNull(user, nameof(user));
-
         user.RefreshToken = GenerateRefreshToken();
 
         if (expireTime)

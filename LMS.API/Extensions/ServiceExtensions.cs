@@ -69,6 +69,7 @@ public static class ServiceExtensions
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+       
         })
         .AddJwtBearer(options =>
         {
