@@ -14,6 +14,9 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.Services.AddDbContext<DatabaseContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseContext") ?? throw new InvalidOperationException("Connection string 'DatabaseContext' not found.")));
+
         // Add services to the container.
         builder.Services.AddControllers(configure =>
         {
