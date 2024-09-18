@@ -105,27 +105,23 @@ public class AuthService : IAuthService
         }
 
 
+
+
     public async Task<IdentityResult> RegisterUserAsync(UserForRegistrationDto userForRegistration)
     {
         ArgumentNullException.ThrowIfNull(userForRegistration, nameof(userForRegistration));
 
-        var roleExists = await roleManager.RoleExistsAsync(userForRegistration.Role!);
-
-        if (!roleExists)
+        var user = new ApplicationUser
         {
-            await roleManager.CreateAsync(new IdentityRole("Student"));
-            await roleManager.CreateAsync(new IdentityRole("Teacher"));
-            //return IdentityResult.Failed(new IdentityError { Description = "Role does not exist" });
-        }
+            UserName = userForRegistration.UserName,
+            Email = userForRegistration.Email,
+        };
 
-        var user = mapper.Map<ApplicationUser>(userForRegistration);
-
-
-        IdentityResult result = await userManager.CreateAsync(user, userForRegistration.Password!);
+        var result = await userManager.CreateAsync(user, userForRegistration.Password!);
 
         if (result.Succeeded)
         {
-            await userManager.AddToRoleAsync(user, userForRegistration.Role!);
+            await userManager.AddToRoleAsync(user, userForRegistration.Role!); 
         }
 
         return result;
