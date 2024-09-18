@@ -10,13 +10,15 @@ namespace LMS.API.Models.Dtos.Mapper
         public MapperManager() {
 
             CreateMap<Activity, ActivityDto>();
-            CreateMap<Module, ModuleDto>();
+            CreateMap<Module, ModuleDto>().ReverseMap();
             CreateMap<ApplicationUser, UserForListDto>();
             CreateMap<ApplicationUser, UserForRegistrationDto>().ReverseMap();
-            CreateMap<Course, CourseDto>();
+            CreateMap<Course, CourseDto>().ReverseMap();
 
             CreateMap<ApplicationUser, UserForListDto>()
                 .ForMember(dest => dest.Role, opt => opt.Ignore());
+
+            //CreateMap<Course, CourseDto>().ForMember(dest => dest.Modules, opt => opt.MapFrom(src => src.Modules)).ReverseMap();
 
         }
     }
