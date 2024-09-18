@@ -1,6 +1,7 @@
 
 using Companies.API.Extensions;
 using LMS.API.Data;
+using LMS.API.Models.Dtos.Mapper;
 using LMS.API.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -16,6 +17,9 @@ public class Program
 
         builder.Services.AddDbContext<DatabaseContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseContext") ?? throw new InvalidOperationException("Connection string 'DatabaseContext' not found.")));
+
+        //Mapper
+        builder.Services.AddAutoMapper(typeof(MapperManager));
 
         // Add services to the container.
         builder.Services.AddControllers(configure =>
