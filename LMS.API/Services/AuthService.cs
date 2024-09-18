@@ -1,4 +1,5 @@
-﻿using LMS.API.Models.Dtos;
+﻿using AutoMapper;
+using LMS.API.Models.Dtos;
 using LMS.API.Models.Entities;
 using LMS.API.Service.Contracts;
 using Microsoft.AspNetCore.Identity;
@@ -13,12 +14,16 @@ public class AuthService : IAuthService
 {
     private readonly UserManager<ApplicationUser> userManager;
     private readonly IConfiguration configuration;
+    private readonly RoleManager<IdentityRole> roleManager;
     private ApplicationUser? user;
+    private readonly IMapper mapper;
 
-    public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+    public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, IMapper mapper)
     {
         this.userManager = userManager;
         this.configuration = configuration;
+        this.roleManager = roleManager;
+        this.mapper = mapper;
     }
 
     public async Task<TokenDto> CreateTokenAsync(bool expireTime)
@@ -71,6 +76,13 @@ public class AuthService : IAuthService
             new Claim(ClaimTypes.NameIdentifier, user.Id!),
             //Add more if needed
         };
+        
+        var roles = userManager.GetRolesAsync(user).Result;
+
+        foreach (var role in roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
 
         return claims;
     }
@@ -86,18 +98,35 @@ public class AuthService : IAuthService
         return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
 
     }
+        static async Task SeedRoles(RoleManager<IdentityRole> roleManager)
+        {
+            if (!await roleManager.RoleExistsAsync("Teacher")) { await roleManager.CreateAsync(new IdentityRole("Teacher")); }
+            if (!await roleManager.RoleExistsAsync("Student")) { await roleManager.CreateAsync(new IdentityRole("Student")); }
+        }
+
 
     public async Task<IdentityResult> RegisterUserAsync(UserForRegistrationDto userForRegistration)
     {
         ArgumentNullException.ThrowIfNull(userForRegistration, nameof(userForRegistration));
 
-        var user = new ApplicationUser
+        var roleExists = await roleManager.RoleExistsAsync(userForRegistration.Role!);
+
+        if (!roleExists)
         {
-            UserName = userForRegistration.UserName,
-            Email = userForRegistration.Email,
-        };
+            await roleManager.CreateAsync(new IdentityRole("Student"));
+            await roleManager.CreateAsync(new IdentityRole("Teacher"));
+            //return IdentityResult.Failed(new IdentityError { Description = "Role does not exist" });
+        }
+
+        var user = mapper.Map<ApplicationUser>(userForRegistration);
+
 
         IdentityResult result = await userManager.CreateAsync(user, userForRegistration.Password!);
+
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(user, userForRegistration.Role!);
+        }
 
         return result;
     }

@@ -67,6 +67,7 @@ public class Program
         //ToDo: AddAuthentication
         app.UseAuthorization();
 
+
         app.MapControllers();
 
         app.Run();

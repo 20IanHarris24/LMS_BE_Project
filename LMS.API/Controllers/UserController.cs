@@ -15,7 +15,7 @@ namespace LMS.API.Controllers
         private readonly IMapper _mapper;
         public UserController(DatabaseContext context, IMapper mapper)
         {
-            this._context = context;
+            _context = context;
             _mapper = mapper;
 
         }
