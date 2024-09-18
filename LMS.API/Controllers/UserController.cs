@@ -1,4 +1,6 @@
-﻿using LMS.API.Data;
+﻿using AutoMapper;
+using LMS.API.Data;
+using LMS.API.Models.Dtos;
 using LMS.API.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,22 +12,28 @@ namespace LMS.API.Controllers
     public class UserController : ControllerBase
     {
         private readonly DatabaseContext _context;
-        public UserController(DatabaseContext context)
+        private readonly IMapper _mapper;
+        public UserController(DatabaseContext context, IMapper mapper)
         {
             this._context = context;
+            _mapper = mapper;
 
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ApplicationUser>>> GetUsers() 
+        public async Task<ActionResult<IEnumerable<UserForListDto>>> GetUsers() 
         {
             var users = await _context.Set<ApplicationUser>().ToListAsync();
-            return Ok(users);
+            var userDtos = _mapper.Map<IEnumerable<UserForListDto>>(users);
+
+            return Ok(userDtos);
         }
-        public async Task<ActionResult<ApplicationUser>> GetUser(Guid id) 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<UserForListDto>> GetUser(Guid id) 
         {
-            var users = await _context.Set<ApplicationUser>().FirstOrDefaultAsync(user => user.Id == id);
-            return Ok(users);
+            var user = await _context.Set<ApplicationUser>().FirstOrDefaultAsync(user => user.Id == id.ToString());
+            var userDto = _mapper.Map<UserForListDto>(user);
+            return Ok(userDto);
         }
     }
 }
