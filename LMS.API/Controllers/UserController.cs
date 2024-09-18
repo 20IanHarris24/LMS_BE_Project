@@ -26,14 +26,14 @@ namespace LMS.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserForListDto>>> GetUsers()
         {
-            var users = await _userManager.Users.ToListAsync(); // Fetch users from UserManager
+            var users = await _userManager.Users.ToListAsync(); 
             var userDtos = new List<UserForListDto>();
 
             foreach (var user in users)
             {
-                var roles = await _userManager.GetRolesAsync(user); // Fetch roles for each user
+                var roles = await _userManager.GetRolesAsync(user); 
                 var userDto = _mapper.Map<UserForListDto>(user);
-                userDto.Role = roles.FirstOrDefault() ?? "No Role"; // Map the role
+                userDto.Role = roles.FirstOrDefault();
                 userDtos.Add(userDto);
             }
 
@@ -43,15 +43,15 @@ namespace LMS.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<UserForListDto>> GetUser(string id)
         {
-            var user = await _userManager.FindByIdAsync(id); // Fetch user by ID from UserManager
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
                 return NotFound();
             }
 
-            var roles = await _userManager.GetRolesAsync(user); // Fetch roles for the user
+            var roles = await _userManager.GetRolesAsync(user);
             var userDto = _mapper.Map<UserForListDto>(user);
-            userDto.Role = roles.FirstOrDefault() ?? "No Role"; // Map the role
+            userDto.Role = roles.FirstOrDefault();
 
             return Ok(userDto);
         }
