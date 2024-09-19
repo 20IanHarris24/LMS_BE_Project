@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using LMS.API.Models.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace LMS.API.Models.Dtos
 {
-    public record UserForListDto
+    public record UserForListDto 
     {
         [Required]
         public string? UserName { get; init; }
@@ -12,5 +13,6 @@ namespace LMS.API.Models.Dtos
 
         [Required]
         public string? Role { get; set; }
+
     }
 }
