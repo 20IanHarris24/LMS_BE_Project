@@ -97,6 +97,26 @@ namespace LMS.API.Controllers
                 return BadRequest(ModelState);
             }
 
+            if (!string.IsNullOrEmpty(userDto.Role))
+            {
+                var currentRoles = await _userManager.GetRolesAsync(user);  
+
+                if (currentRoles.Any())
+                {
+                    var resultRemove = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+                    if (!resultRemove.Succeeded)
+                    {
+                        return BadRequest("Failed to remove current roles.");
+                    }
+                }
+
+                var resultAdd = await _userManager.AddToRoleAsync(user, userDto.Role);
+                if (!resultAdd.Succeeded)
+                {
+                    return BadRequest("Failed to add the new role.");
+                }
+            }
+
             if (!string.IsNullOrEmpty(userDto.CourseID))
             {
                 var courseExists = await _context.Courses.AnyAsync(c => c.Id.ToString() == userDto.CourseID);
