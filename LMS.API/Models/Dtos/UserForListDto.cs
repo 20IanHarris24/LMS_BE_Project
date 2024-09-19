@@ -11,8 +11,8 @@ namespace LMS.API.Models.Dtos
         [Required]
         public string? Email { get; init; }
 
-        [Required]
         public string? Role { get; set; }
+        public string? CourseID { get; set; }
 
     }
 }

@@ -17,5 +17,5 @@ public record UserForRegistrationDto
     [Required(ErrorMessage = "Role is required")]
     public string? Role { get; init; }
 
-    public string? AssignedCourse { get; set; }
+    public string? CourseID { get; set; }
 }

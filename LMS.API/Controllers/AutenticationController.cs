@@ -27,11 +27,11 @@ public class AutenticationController : ControllerBase
     {
         if (userForRegistration.Role == "student")
         {
-            if (userForRegistration.AssignedCourse == null)
+            if (userForRegistration.CourseID == null)
             {
                 return BadRequest("AssignedCourse is required for students.");
             }
-            var courseExists = await _context.Courses.AnyAsync(c => c.Id.ToString() == userForRegistration.AssignedCourse);
+            var courseExists = await _context.Courses.AnyAsync(c => c.Id.ToString() == userForRegistration.CourseID);
 
             if (!courseExists)
             {

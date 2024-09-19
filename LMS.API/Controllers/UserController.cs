@@ -75,14 +75,14 @@ namespace LMS.API.Controllers
             return Ok(userDto);
         }
         [HttpPatch("{id}")]
-        public async Task<ActionResult> PatchEmployee(string id, JsonPatchDocument<UserForUpdateDto> patchDocument)
+        public async Task<ActionResult<UserForListDto>> PatchUser(string id, [FromBody] JsonPatchDocument<UserForUpdateDto> patchDocument)
         {
             if (patchDocument == null)
             {
                 return BadRequest("The patch document cannot be null.");
             }
 
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _userManager.FindByIdAsync(id); 
             if (user == null)
             {
                 return NotFound("User not found.");
@@ -92,17 +92,31 @@ namespace LMS.API.Controllers
 
             patchDocument.ApplyTo(userDto, ModelState);
 
-            if (!TryValidateModel(userDto))
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
+            if (!string.IsNullOrEmpty(userDto.CourseID))
+            {
+                var courseExists = await _context.Courses.AnyAsync(c => c.Id.ToString() == userDto.CourseID);
+                if (!courseExists)
+                {
+                    return BadRequest("The specified course does not exist.");
+                }
+                user.CourseID = userDto.CourseID;  
+            }
             _mapper.Map(userDto, user);
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); 
 
-            return Ok(userDto);
+            var updatedUserDto = _mapper.Map<UserForListDto>(user);
+
+            return Ok(updatedUserDto);
         }
+
+
+
 
 
     }
