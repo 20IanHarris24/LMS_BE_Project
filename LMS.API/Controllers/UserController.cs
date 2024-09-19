@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
+using Humanizer;
+using LMS.API.Data;
 using LMS.API.Models.Dtos;
 using LMS.API.Models.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace LMS.API.Controllers
 {
@@ -16,11 +16,13 @@ namespace LMS.API.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMapper _mapper;
+        private readonly DatabaseContext _context;
 
-        public UserController(UserManager<ApplicationUser> userManager, IMapper mapper)
+        public UserController(UserManager<ApplicationUser> userManager, IMapper mapper, DatabaseContext context)
         {
             _userManager = userManager;
             _mapper = mapper;
+            _context = context;
         }
 
         [HttpGet]
@@ -55,5 +57,53 @@ namespace LMS.API.Controllers
 
             return Ok(userDto);
         }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<UserForListDto>> UpdateUser(string id, UserForUpdateDto userDto)
+        {
+
+            var user  = await _userManager.FindByIdAsync(id);
+            
+            if (user == null) 
+            {
+                return NotFound();
+            }
+            _mapper.Map(userDto,user);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(userDto);
+        }
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> PatchEmployee(string id, JsonPatchDocument<UserForUpdateDto> patchDocument)
+        {
+            if (patchDocument == null)
+            {
+                return BadRequest("The patch document cannot be null.");
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            var userDto = _mapper.Map<UserForUpdateDto>(user);
+
+            patchDocument.ApplyTo(userDto, ModelState);
+
+            if (!TryValidateModel(userDto))
+            {
+                return BadRequest(ModelState);
+            }
+
+            _mapper.Map(userDto, user);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(userDto);
+        }
+
+
     }
 }

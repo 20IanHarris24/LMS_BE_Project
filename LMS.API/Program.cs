@@ -11,6 +11,7 @@ namespace LMS.API;
 
 public class Program
 {
+
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
@@ -21,13 +22,14 @@ public class Program
         //Mapper
         builder.Services.AddAutoMapper(typeof(MapperManager));
 
+
         // Add services to the container.
         builder.Services.AddControllers(configure =>
         {
             //configure.ReturnHttpNotAcceptable = true;
             //var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().RequireRole("Teacher").Build();
             //configure.Filters.Add(new AuthorizeFilter(policy));
-        });
+        }).AddNewtonsoftJson();
         builder.Services.ConfigureJwt(builder.Configuration);
         builder.Services.ConfigureCors();
         builder.Services.ConfigureServices();
