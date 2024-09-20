@@ -111,12 +111,14 @@ public class AuthService : IAuthService
     {
         ArgumentNullException.ThrowIfNull(userForRegistration, nameof(userForRegistration));
 
-        var user = new ApplicationUser
-        {
-            UserName = userForRegistration.UserName,
-            Email = userForRegistration.Email,
-        };
+        //var user = new ApplicationUser
+        //{
+        //    UserName = userForRegistration.UserName,
+        //    Email = userForRegistration.Email,
+        //};
+        var user = mapper.Map<ApplicationUser>(userForRegistration);
 
+        await SeedRoles(roleManager);
         var result = await userManager.CreateAsync(user, userForRegistration.Password!);
 
         if (result.Succeeded)

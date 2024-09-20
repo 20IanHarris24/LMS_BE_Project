@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LMS.API.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240919135122_userCourseID")]
-    partial class userCourseID
+    [Migration("20240919171719_addcourse")]
+    partial class addcourse
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -80,11 +80,11 @@ namespace LMS.API.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<string>("AssignedCourse")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CourseID")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
