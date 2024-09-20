@@ -15,11 +15,13 @@ namespace LMS.API.Controllers
     {
         private readonly IMapper _mapper;
         private readonly DatabaseContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
         //private readonly ServiceManager _serviceManager;
-        public CourseController(IMapper mapper, DatabaseContext context)
+        public CourseController(IMapper mapper, DatabaseContext context, UserManager<ApplicationUser> userManager)
         {
             _mapper = mapper;
             _context = context;
+            _userManager = userManager;
             //_serviceManager = serviceManager;
 
         }
@@ -41,6 +43,23 @@ namespace LMS.API.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(_mapper.Map<CourseDto>(course));
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CourseDto>> GetCourse(string id)
+        {
+            var user = await _context.Users.Where(u => u.Id == id).Select(u => new {u.CourseId}).FirstOrDefaultAsync();
+            if (user == null)
+            {
+                return NotFound();
+            }
+            if (user.CourseId == null || !user.CourseId.HasValue)
+            {
+                return NotFound();
+            }
+            //var courseDto = _mapper.Map<CourseDto>(user.CourseId);
+
+            return Ok(user.CourseId);
         }
     }
 }

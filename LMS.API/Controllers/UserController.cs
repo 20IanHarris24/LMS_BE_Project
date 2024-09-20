@@ -124,7 +124,7 @@ namespace LMS.API.Controllers
                 {
                     return BadRequest("The specified course does not exist.");
                 }
-                user.CourseID = userDto.CourseID;  
+                user.CourseId = Guid.Parse(userDto.CourseID);  
             }
             _mapper.Map(userDto, user);
 

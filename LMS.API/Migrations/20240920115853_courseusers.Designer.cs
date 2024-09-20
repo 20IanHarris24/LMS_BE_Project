@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LMS.API.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240919171719_addcourse")]
-    partial class addcourse
+    [Migration("20240920115853_courseusers")]
+    partial class courseusers
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -84,8 +84,11 @@ namespace LMS.API.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CourseID")
+                    b.Property<string>("CourseId")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("CourseId1")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -134,6 +137,8 @@ namespace LMS.API.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CourseId1");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -348,6 +353,13 @@ namespace LMS.API.Migrations
                     b.Navigation("Type");
                 });
 
+            modelBuilder.Entity("LMS.API.Models.Entities.ApplicationUser", b =>
+                {
+                    b.HasOne("LMS.API.Models.Entities.Course", null)
+                        .WithMany("Users")
+                        .HasForeignKey("CourseId1");
+                });
+
             modelBuilder.Entity("LMS.API.Models.Entities.Module", b =>
                 {
                     b.HasOne("LMS.API.Models.Entities.Course", "Course")
@@ -413,6 +425,8 @@ namespace LMS.API.Migrations
             modelBuilder.Entity("LMS.API.Models.Entities.Course", b =>
                 {
                     b.Navigation("Modules");
+
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

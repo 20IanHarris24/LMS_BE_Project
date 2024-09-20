@@ -8,5 +8,6 @@
         public DateTime Start { get; set; }
 
         public IEnumerable<Module> Modules { get; set; }
+        public IEnumerable<ApplicationUser>? Users { get; set; }
     }
 }
