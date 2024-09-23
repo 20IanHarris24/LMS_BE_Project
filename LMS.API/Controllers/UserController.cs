@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LMS.API.Controllers
 {
@@ -24,7 +25,7 @@ namespace LMS.API.Controllers
             _mapper = mapper;
             _context = context;
         }
-
+        [Authorize(Roles = "Teacher,Student")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserForListDto>>> GetUsers()
         {
@@ -41,7 +42,7 @@ namespace LMS.API.Controllers
 
             return Ok(userDtos);
         }
-
+        [Authorize(Roles = "Teacher")]
         [HttpGet("{id}")]
         public async Task<ActionResult<UserForListDto>> GetUser(string id)
         {
@@ -57,7 +58,7 @@ namespace LMS.API.Controllers
 
             return Ok(userDto);
         }
-
+        [Authorize(Roles = "Teacher")]
         [HttpPut("{id}")]
         public async Task<ActionResult<UserForListDto>> UpdateUser(string id, UserForUpdateDto userDto)
         {
@@ -74,6 +75,7 @@ namespace LMS.API.Controllers
 
             return Ok(userDto);
         }
+        [Authorize(Roles = "Teacher")]
         [HttpPatch("{id}")]
         public async Task<ActionResult<UserForListDto>> PatchUser(string id, [FromBody] JsonPatchDocument<UserForUpdateDto> patchDocument)
         {
