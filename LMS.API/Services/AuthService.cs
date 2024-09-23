@@ -2,6 +2,7 @@
 using LMS.API.Models.Dtos;
 using LMS.API.Models.Entities;
 using LMS.API.Service.Contracts;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -25,6 +26,7 @@ public class AuthService : IAuthService
         this.roleManager = roleManager;
         this.mapper = mapper;
     }
+
 
     public async Task<TokenDto> CreateTokenAsync(bool expireTime)
     {
@@ -57,11 +59,12 @@ public class AuthService : IAuthService
         var jwtSettings = configuration.GetSection("JwtSettings");
 
         var tokenOptions = new JwtSecurityToken(
-                                    issuer: configuration["Issuer"],
-                                    audience: configuration["Audience"],
-                                    claims: claims,
-                                    expires: DateTime.Now.AddMinutes(Convert.ToDouble(jwtSettings["Expires"])),
-                                    signingCredentials: signing);
+            issuer: configuration["JwtSettings:Issuer"],
+            audience: configuration["JwtSettings:Audience"], // Ensure this is set
+            claims: claims,
+            expires: DateTime.Now.AddMinutes(Convert.ToDouble(jwtSettings["Expires"])),
+            signingCredentials: signing
+        );
 
         return tokenOptions;
     }
@@ -182,5 +185,32 @@ public class AuthService : IAuthService
 
         return principal;
     }
+
+    public static void ConfigureJwt(IServiceCollection services, IConfiguration configuration)
+    {
+        var jwtSettings = configuration.GetSection("JwtSettings");
+        var secretKey = jwtSettings["Key"];
+
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtSettings["Issuer"],
+                ValidAudience = jwtSettings["Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!)),
+                RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role" // Set role claim type
+            };
+        });
+    }
+
 }
 

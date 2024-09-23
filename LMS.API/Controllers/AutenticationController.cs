@@ -22,6 +22,7 @@ public class AutenticationController : ControllerBase
         _context = context;
     }
 
+    [Authorize(Roles = "Teacher")]
     [HttpPost]
     public async Task<IActionResult> RegisterUser(UserForRegistrationDto userForRegistration)
     {
