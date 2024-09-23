@@ -57,9 +57,9 @@ namespace LMS.API.Controllers
             {
                 return NotFound();
             }
-            //var courseDto = _mapper.Map<CourseDto>(user.CourseId);
-
-            return Ok(user.CourseId);
+            var course = await _context.Courses.Include(c => c.Modules).FirstOrDefaultAsync(c => c.Id == user.CourseId);
+            var courseDto = _mapper.Map<CourseDto>(course);
+            return Ok(courseDto);
         }
     }
 }
