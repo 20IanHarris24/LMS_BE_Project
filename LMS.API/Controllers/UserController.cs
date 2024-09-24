@@ -28,12 +28,12 @@ namespace LMS.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserForListDto>>> GetUsers()
         {
-            var users = await _userManager.Users.ToListAsync(); 
+            var users = await _userManager.Users.ToListAsync();
             var userDtos = new List<UserForListDto>();
 
             foreach (var user in users)
             {
-                var roles = await _userManager.GetRolesAsync(user); 
+                var roles = await _userManager.GetRolesAsync(user);
                 var userDto = _mapper.Map<UserForListDto>(user);
                 userDto.Role = roles.FirstOrDefault();
                 userDtos.Add(userDto);
@@ -83,11 +83,34 @@ namespace LMS.API.Controllers
         public async Task<ActionResult<UserForListDto>> UpdateUser(string id, UserForUpdateDto userDto)
         {
 
-            var user  = await _userManager.FindByIdAsync(id);
-            
-            if (user == null) 
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
             {
                 return NotFound();
+            }
+            if (userDto.Role!.ToLower() == "student" && string.IsNullOrEmpty(userDto.CourseID))
+            {
+                return BadRequest("Student must have a course assigned.");
+            }
+            if (!string.IsNullOrEmpty(userDto.Role))
+            {
+                var currentRoles = await _userManager.GetRolesAsync(user);  
+
+                if (currentRoles.Any())
+                {
+                    var resultRemove = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+                    if (!resultRemove.Succeeded)
+                    {
+                        return BadRequest("Failed to remove current roles.");
+                    }
+                }
+
+                var resultAdd = await _userManager.AddToRoleAsync(user, userDto.Role);
+                if (!resultAdd.Succeeded)
+                {
+                    return BadRequest("Failed to add the new role.");
+                }
             }
             _mapper.Map(userDto,user);
 
