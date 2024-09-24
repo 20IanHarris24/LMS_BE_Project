@@ -9,5 +9,6 @@
         public DateTime? End { get; set; }
         public Guid CourseId { get; set; }
         public Course? Course { get; set; }
+        public IEnumerable<Activity>? Activities { get; set; }
     }
 }
