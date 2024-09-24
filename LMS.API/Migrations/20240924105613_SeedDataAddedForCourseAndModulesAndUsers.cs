@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace LMS.API.Migrations
 {
     /// <inheritdoc />
-    public partial class courseusers : Migration
+    public partial class SeedDataAddedForCourseAndModulesAndUsers : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -79,8 +81,7 @@ namespace LMS.API.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RefreshTokenExpireTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CourseId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CourseId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CourseId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -100,8 +101,8 @@ namespace LMS.API.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUsers_Courses_CourseId1",
-                        column: x => x.CourseId1,
+                        name: "FK_AspNetUsers_Courses_CourseId",
+                        column: x => x.CourseId,
                         principalTable: "Courses",
                         principalColumn: "Id");
                 });
@@ -214,7 +215,7 @@ namespace LMS.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Activitys",
+                name: "Activities",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -227,29 +228,56 @@ namespace LMS.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Activitys", x => x.Id);
+                    table.PrimaryKey("PK_Activities", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Activitys_ActivityType_TypeId",
+                        name: "FK_Activities_ActivityType_TypeId",
                         column: x => x.TypeId,
                         principalTable: "ActivityType",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Activitys_Modules_ModuleId",
+                        name: "FK_Activities_Modules_ModuleId",
                         column: x => x.ModuleId,
                         principalTable: "Modules",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "36c966c1-3e90-4ffc-88e5-f5920c427604", null, "Student", "STUDENT" },
+                    { "555426ef-24d0-467a-8961-749fe33453ea", null, "Teacher", "TEACHER" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Courses",
+                columns: new[] { "Id", "Description", "Name", "Start" },
+                values: new object[,]
+                {
+                    { new Guid("260b77ed-0918-413a-939d-0fcd5296f74d"), "Intro to Math", "Mathematics 101", new DateTime(2024, 9, 24, 10, 56, 12, 525, DateTimeKind.Utc).AddTicks(8828) },
+                    { new Guid("b1eae6e6-de01-466e-a922-10d13dd45944"), "Intro to Physics", "Physics 101", new DateTime(2024, 9, 24, 10, 56, 12, 525, DateTimeKind.Utc).AddTicks(8831) }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "CourseId", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "RefreshTokenExpireTime", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[,]
+                {
+                    { "284ebc37-63e1-4420-9a34-24ced1619797", 0, "9d9cb635-07b9-4807-a14f-8e3db55d3abf", new Guid("b1eae6e6-de01-466e-a922-10d13dd45944"), "student2@example.com", true, false, null, "STUDENT2@EXAMPLE.COM", "STUDENT2@EXAMPLE.COM", "AQAAAAIAAYagAAAAEMl8OA3nGQR/Xg6vitREFVF8PQzMmqANmWp4yp/yUh4ffHIASvluxe2gHq78Sz12FA==", null, false, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "26cef1c5-c20b-46b1-b7fa-b74f357942fd", false, "student2@example.com" },
+                    { "d556dbc4-d1d2-48c4-a6dc-f110d6b7297f", 0, "46339dea-9f11-4e85-bc7a-f1acbe8f3c76", new Guid("260b77ed-0918-413a-939d-0fcd5296f74d"), "student1@example.com", true, false, null, "STUDENT1@EXAMPLE.COM", "STUDENT1@EXAMPLE.COM", "AQAAAAIAAYagAAAAEHU/8IRpxJ/hk3zj0OAFQeGI6JtetjRchdAlyicMkars0ulrvi0ArZ5r4Zxv7jxk+A==", null, false, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "e9f44dd9-985a-46af-acdf-f24e85beaf58", false, "student1@example.com" }
+                });
+
             migrationBuilder.CreateIndex(
-                name: "IX_Activitys_ModuleId",
-                table: "Activitys",
+                name: "IX_Activities_ModuleId",
+                table: "Activities",
                 column: "ModuleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Activitys_TypeId",
-                table: "Activitys",
+                name: "IX_Activities_TypeId",
+                table: "Activities",
                 column: "TypeId");
 
             migrationBuilder.CreateIndex(
@@ -285,9 +313,9 @@ namespace LMS.API.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_CourseId1",
+                name: "IX_AspNetUsers_CourseId",
                 table: "AspNetUsers",
-                column: "CourseId1");
+                column: "CourseId");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
@@ -306,7 +334,7 @@ namespace LMS.API.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Activitys");
+                name: "Activities");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");

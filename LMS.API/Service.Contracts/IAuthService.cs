@@ -9,4 +9,6 @@ public interface IAuthService
     Task<TokenDto> RefreshTokenAsync(TokenDto token);
     Task<IdentityResult> RegisterUserAsync(UserForRegistrationDto userForRegistration);
     Task<bool> ValidateUserAsync(UserForAuthenticationDto user);
+
+    Task SeedUsersAsync();
 }
