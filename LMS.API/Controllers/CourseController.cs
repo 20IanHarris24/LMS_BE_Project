@@ -63,6 +63,25 @@ namespace LMS.API.Controllers
             return Ok(courseDto);
         }
 
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCourse(Guid id)
+        {
+            var course = await _context.Set<Course>()
+                .Include(c => c.Modules)  
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (course == null)
+            {
+                return NotFound();  
+            }
+
+            _context.Courses.Remove(course);
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+
         [HttpPut("{id}")]
         public async Task<ActionResult<CourseDto>> UpdateCourse(string id, CourseForUpdateDto courseDto)
         {
@@ -74,6 +93,7 @@ namespace LMS.API.Controllers
             _mapper.Map(courseDto, course);
             await _context.SaveChangesAsync();
             return Ok(_mapper.Map<CourseForUpdateDto>(course));
+
         }
     }
 }
