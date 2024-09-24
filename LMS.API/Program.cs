@@ -25,6 +25,7 @@ public class Program
 
         //Mapper
         builder.Services.AddAutoMapper(typeof(MapperManager));
+        
 
 
         // Add services to the container.
