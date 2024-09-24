@@ -62,5 +62,24 @@ namespace LMS.API.Controllers
             var courseDto = _mapper.Map<CourseDto>(course);
             return Ok(courseDto);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCourse(Guid id)
+        {
+            var course = await _context.Set<Course>()
+                .Include(c => c.Modules)  
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (course == null)
+            {
+                return NotFound();  
+            }
+
+            _context.Courses.Remove(course);
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }
