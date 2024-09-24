@@ -209,7 +209,7 @@ public class AuthService : IAuthService
             },
             new UserForRegistrationDto
             {
-                UserName = "Student",
+                UserName = "Student2",
                 Password = "Password123!",
                 Email = "student2@example.com",
                 Role = "Student"
