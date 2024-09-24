@@ -49,7 +49,7 @@ namespace LMS.API.Controllers
         [HttpGet("{user_id}")]
         public async Task<ActionResult<CourseDto>> GetCourse(string user_id)
         {
-            var user = await _context.Users.Where(u => u.Id == user_id).Select(u => new {u.CourseId}).FirstOrDefaultAsync();
+            var user = await _context.Users.Where(u => u.Id == user_id).Select(u => new { u.CourseId }).FirstOrDefaultAsync();
             if (user == null)
             {
                 return NotFound();
@@ -68,12 +68,12 @@ namespace LMS.API.Controllers
         public async Task<IActionResult> DeleteCourse(Guid id)
         {
             var course = await _context.Set<Course>()
-                .Include(c => c.Modules)  
+                .Include(c => c.Modules)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (course == null)
             {
-                return NotFound();  
+                return NotFound();
             }
 
             _context.Courses.Remove(course);
@@ -81,6 +81,7 @@ namespace LMS.API.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<CourseDto>> UpdateCourse(string id, CourseForUpdateDto courseDto)
