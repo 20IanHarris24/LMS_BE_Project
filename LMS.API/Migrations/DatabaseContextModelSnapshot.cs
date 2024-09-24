@@ -52,7 +52,7 @@ namespace LMS.API.Migrations
 
                     b.HasIndex("TypeId");
 
-                    b.ToTable("Activitys", (string)null);
+                    b.ToTable("Activities");
                 });
 
             modelBuilder.Entity("LMS.API.Models.Entities.ActivityType", b =>
@@ -66,7 +66,7 @@ namespace LMS.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ActivityType", (string)null);
+                    b.ToTable("ActivityType");
                 });
 
             modelBuilder.Entity("LMS.API.Models.Entities.ApplicationUser", b =>
@@ -143,6 +143,44 @@ namespace LMS.API.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "d556dbc4-d1d2-48c4-a6dc-f110d6b7297f",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "46339dea-9f11-4e85-bc7a-f1acbe8f3c76",
+                            CourseId = new Guid("260b77ed-0918-413a-939d-0fcd5296f74d"),
+                            Email = "student1@example.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "STUDENT1@EXAMPLE.COM",
+                            NormalizedUserName = "STUDENT1@EXAMPLE.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHU/8IRpxJ/hk3zj0OAFQeGI6JtetjRchdAlyicMkars0ulrvi0ArZ5r4Zxv7jxk+A==",
+                            PhoneNumberConfirmed = false,
+                            RefreshTokenExpireTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SecurityStamp = "e9f44dd9-985a-46af-acdf-f24e85beaf58",
+                            TwoFactorEnabled = false,
+                            UserName = "student1@example.com"
+                        },
+                        new
+                        {
+                            Id = "284ebc37-63e1-4420-9a34-24ced1619797",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "9d9cb635-07b9-4807-a14f-8e3db55d3abf",
+                            CourseId = new Guid("b1eae6e6-de01-466e-a922-10d13dd45944"),
+                            Email = "student2@example.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "STUDENT2@EXAMPLE.COM",
+                            NormalizedUserName = "STUDENT2@EXAMPLE.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMl8OA3nGQR/Xg6vitREFVF8PQzMmqANmWp4yp/yUh4ffHIASvluxe2gHq78Sz12FA==",
+                            PhoneNumberConfirmed = false,
+                            RefreshTokenExpireTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SecurityStamp = "26cef1c5-c20b-46b1-b7fa-b74f357942fd",
+                            TwoFactorEnabled = false,
+                            UserName = "student2@example.com"
+                        });
                 });
 
             modelBuilder.Entity("LMS.API.Models.Entities.Course", b =>
@@ -164,7 +202,23 @@ namespace LMS.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Courses", (string)null);
+                    b.ToTable("Courses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("260b77ed-0918-413a-939d-0fcd5296f74d"),
+                            Description = "Intro to Math",
+                            Name = "Mathematics 101",
+                            Start = new DateTime(2024, 9, 24, 10, 56, 12, 525, DateTimeKind.Utc).AddTicks(8828)
+                        },
+                        new
+                        {
+                            Id = new Guid("b1eae6e6-de01-466e-a922-10d13dd45944"),
+                            Description = "Intro to Physics",
+                            Name = "Physics 101",
+                            Start = new DateTime(2024, 9, 24, 10, 56, 12, 525, DateTimeKind.Utc).AddTicks(8831)
+                        });
                 });
 
             modelBuilder.Entity("LMS.API.Models.Entities.Module", b =>
@@ -192,7 +246,7 @@ namespace LMS.API.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("Modules", (string)null);
+                    b.ToTable("Modules");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -220,6 +274,20 @@ namespace LMS.API.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "555426ef-24d0-467a-8961-749fe33453ea",
+                            Name = "Teacher",
+                            NormalizedName = "TEACHER"
+                        },
+                        new
+                        {
+                            Id = "36c966c1-3e90-4ffc-88e5-f5920c427604",
+                            Name = "Student",
+                            NormalizedName = "STUDENT"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
