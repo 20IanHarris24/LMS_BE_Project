@@ -85,18 +85,14 @@ public class Program
 
         app.MapControllers();
 
-        // Seed the database
         using (var scope = app.Services.CreateScope())
         {
             var services = scope.ServiceProvider;
 
             try
             {
-                // Get an instance of AuthService
                 var authService = services.GetRequiredService<IAuthService>();
-
-                // Call SeedUsersAsync
-                await authService.SeedUsersAsync(); // Ensure that SeedUsersAsync is public and accessible
+                await authService.SeedUsersAsync();
             }
             catch (Exception ex)
             {
@@ -105,6 +101,6 @@ public class Program
             }
         }
 
-        await app.RunAsync(); // Use RunAsync for async Main
+        await app.RunAsync();
     }
 }
