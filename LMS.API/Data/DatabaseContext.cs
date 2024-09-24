@@ -16,6 +16,7 @@ namespace LMS.API.Data
         public DbSet<Course> Courses { get; set; } = default!;
         public DbSet<Module> Modules { get; set; } = default!;
         public DbSet<Activity> Activitys { get; set; }
+        public DbSet<ActivityType> ActivityType { get; set; } 
 
     }
 }
