@@ -15,6 +15,7 @@ namespace LMS.API.Models.Dtos.Mapper
             CreateMap<ApplicationUser, UserForUpdateDto>().ReverseMap();
             CreateMap<Course, CourseDto>().ReverseMap();
             CreateMap<Course, CourseForUpdateDto>().ReverseMap();
+            CreateMap<ModuleForUpdateDto, Module>().ReverseMap();
         }
     }
 }
