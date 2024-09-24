@@ -62,5 +62,18 @@ namespace LMS.API.Controllers
             var courseDto = _mapper.Map<CourseDto>(course);
             return Ok(courseDto);
         }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<CourseDto>> UpdateCourse(string id, CourseForUpdateDto courseDto)
+        {
+            var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id.ToString() == id);
+            if (course == null)
+            {
+                return NotFound();
+            }
+            _mapper.Map(courseDto, course);
+            await _context.SaveChangesAsync();
+            return Ok(_mapper.Map<CourseForUpdateDto>(course));
+        }
     }
 }
