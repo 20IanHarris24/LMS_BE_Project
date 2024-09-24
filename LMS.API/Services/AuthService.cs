@@ -25,6 +25,8 @@ public class AuthService : IAuthService
         this.configuration = configuration;
         this.roleManager = roleManager;
         this.mapper = mapper;
+
+        SeedUsersAsync().GetAwaiter().GetResult();
     }
 
 
@@ -184,6 +186,44 @@ public class AuthService : IAuthService
         }
 
         return principal;
+    }
+    public async Task SeedUsersAsync()
+    {
+        await SeedRoles(roleManager);
+
+        var users = new List<UserForRegistrationDto>
+        {
+            new UserForRegistrationDto
+            {
+                UserName = "Teacher",
+                Password = "Password123!",
+                Email = "teacher@example.com",
+                Role = "Teacher"
+            },
+            new UserForRegistrationDto
+            {
+                UserName = "Student",
+                Password = "Password123!",
+                Email = "student1@example.com",
+                Role = "Student"
+            },
+            new UserForRegistrationDto
+            {
+                UserName = "Student2",
+                Password = "Password123!",
+                Email = "student2@example.com",
+                Role = "Student"
+            }
+        };
+
+        foreach (var userDto in users)
+        {
+            var result = await RegisterUserAsync(userDto);
+            if (!result.Succeeded)
+            {
+                Console.WriteLine($"Failed to create user {userDto.UserName}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+            }
+        }
     }
 
     public static void ConfigureJwt(IServiceCollection services, IConfiguration configuration)

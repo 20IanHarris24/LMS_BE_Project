@@ -1,10 +1,11 @@
-
 using Companies.API.Extensions;
 using LMS.API.Data;
+using LMS.API.Models.Dtos;
 using LMS.API.Models.Dtos.Mapper;
 using LMS.API.Models.Entities;
+using LMS.API.Service.Contracts;
+using LMS.API.Services; // Make sure to include this namespace
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -15,15 +16,12 @@ namespace LMS.API;
 
 public class Program
 {
-
-    public static void Main(string[] args)
+    public static async Task Main(string[] args) // Make Main async
     {
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddDbContext<DatabaseContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseContext") ?? throw new InvalidOperationException("Connection string 'DatabaseContext' not found.")));
-
-        //Mapper
         builder.Services.AddAutoMapper(typeof(MapperManager));
         
 
@@ -39,6 +37,7 @@ public class Program
         builder.Services.ConfigureServices();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.ConfigureJwt(builder.Configuration);
+
         builder.Services.AddSwaggerGen(c =>
         {
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -52,19 +51,19 @@ public class Program
             });
 
             c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference
                 {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    new string[] {}
                 }
-            },
-            new string[] {}
-        }
-    });
+            });
         });
 
         builder.Services.AddIdentityCore<ApplicationUser>(opt =>
@@ -74,19 +73,12 @@ public class Program
             opt.Password.RequireUppercase = false;
             opt.Password.RequireNonAlphanumeric = false;
             opt.Password.RequiredLength = 3;
-
         })
-               .AddRoles<IdentityRole>()
-               .AddEntityFrameworkStores<DatabaseContext>()
-               .AddDefaultTokenProviders();
-
-
-
-        //ToDo: AddIdentityCore 
-        //ToDo: AddDbContext
+        .AddRoles<IdentityRole>()
+        .AddEntityFrameworkStores<DatabaseContext>()
+        .AddDefaultTokenProviders();
 
         var app = builder.Build();
-
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
@@ -97,16 +89,27 @@ public class Program
 
         app.UseHttpsRedirection();
         app.UseCors("AllowAll");
-        //ToDo: AddAuthentication
-
-
         app.UseAuthentication();
-
         app.UseAuthorization();
-
 
         app.MapControllers();
 
-        app.Run();
+        using (var scope = app.Services.CreateScope())
+        {
+            var services = scope.ServiceProvider;
+
+            try
+            {
+                var authService = services.GetRequiredService<IAuthService>();
+                await authService.SeedUsersAsync();
+            }
+            catch (Exception ex)
+            {
+                var logger = services.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "An error occurred seeding the DB.");
+            }
+        }
+
+        await app.RunAsync();
     }
 }
