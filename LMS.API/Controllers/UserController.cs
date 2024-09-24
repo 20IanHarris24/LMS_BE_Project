@@ -58,6 +58,27 @@ namespace LMS.API.Controllers
             return Ok(userDto);
         }
 
+        [HttpGet("courses/{id}")]
+        public async Task<ActionResult<UserForListDto>> GetAllUsersByCourseId(string id)
+        {
+            var users = await _userManager.Users.Where(u => u.CourseId.ToString() == id).ToListAsync();
+            if (users == null)
+            {
+                return NotFound();
+            }
+
+            var userDtos = new List<UserForListDto>();
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                var userDto = _mapper.Map<UserForListDto>(user);
+                userDto.Role = roles.FirstOrDefault();
+                userDtos.Add(userDto);
+            }
+            //var roles = await _userManager.GetRolesAsync(users);
+            return Ok(userDtos);
+        }
+
         [HttpPut("{id}")]
         public async Task<ActionResult<UserForListDto>> UpdateUser(string id, UserForUpdateDto userDto)
         {
