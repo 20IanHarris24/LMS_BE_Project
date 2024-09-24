@@ -55,8 +55,35 @@ namespace LMS.API.Controllers
             return activities;
         }
 
+        [HttpGet("moduleId/{id}")]
+        public async Task<ActionResult<IEnumerable<ActivityListDto>>> GetActivitysByModuleId(Guid id)
+        {
+            var actList = await _context.Activitys
+                                    .Where(ac => ac.ModuleId == id)
+                                    .ToListAsync();
+
+
+            List<ActivityListDto> activities = [];
+            if (actList.Any())
+            {
+                foreach (var activity in actList)
+                {
+                    var type = await _context.ActivityType.Where(act => act.Id == activity.TypeId).FirstOrDefaultAsync();
+                    var dto = new ActivityListDto();
+                    dto.Name = activity.Name;
+                    dto.Description = activity.Description;
+                    dto.ActivityType = type?.Name;
+                    dto.Start = activity.Start;
+                    dto.End = activity.End;
+                    dto.ModuleId = activity.ModuleId;
+                    activities.Add(dto);
+                }
+            }
+
+            return activities;
+        }
+
         //GET: api/Activities/5
-        //[HttpGet("{id}")]
         //public async Task<ActionResult<Activity>> GetActivity(Guid id)
         //{
         //    var activity = await _context.Activitys.FindAsync(id);
