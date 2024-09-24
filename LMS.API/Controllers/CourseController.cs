@@ -45,7 +45,7 @@ namespace LMS.API.Controllers
 
             return Ok(_mapper.Map<CourseDto>(course));
         }
-        [Authorize(Roles = "Teacher")]
+        [Authorize(Roles = "Teacher,Student")]
         [HttpGet("{user_id}")]
         public async Task<ActionResult<CourseDto>> GetCourse(string user_id)
         {
