@@ -12,6 +12,8 @@ namespace LMS.API.Models.Dtos.Mapper
             CreateMap<Activity, ActivityListDto>();
             CreateMap<ActivityType, ActivityTypeDto>().ReverseMap();
             CreateMap<Module, ModuleDto>().ReverseMap();
+            CreateMap<Module, ModuleManipulationDto>().ReverseMap();
+            CreateMap<Module, ModuleForUpdateDto>().ReverseMap();//ModuleForUpdateDto
             CreateMap<ApplicationUser, UserForListDto>()
                 .ForMember(dest => dest.Role, opt => opt.Ignore());
             CreateMap<ApplicationUser, UserForRegistrationDto>().ReverseMap();

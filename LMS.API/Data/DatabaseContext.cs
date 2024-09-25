@@ -28,9 +28,10 @@ namespace LMS.API.Data
                 new Course { Id = course1Id, Name = "Mathematics 101", Description = "Intro to Math", Start = DateTime.UtcNow },
                 new Course { Id = course2Id, Name = "Physics 101", Description = "Intro to Physics", Start = DateTime.UtcNow }
             );
+        }
         public DbSet<Activity> Activitys { get; set; }
         public DbSet<ActivityType> ActivityType { get; set; } 
 
-        }
+        
     }
 }
