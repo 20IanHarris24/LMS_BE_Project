@@ -14,7 +14,7 @@ namespace LMS.API.Data
 
         public DbSet<Course> Courses { get; set; } = default!;
         public DbSet<Module> Modules { get; set; } = default!;
-        public DbSet<Activity> Activities { get; set; } = default!;
+        public DbSet<Activity> Activities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,6 +29,7 @@ namespace LMS.API.Data
                 new Course { Id = course2Id, Name = "Physics 101", Description = "Intro to Physics", Start = DateTime.UtcNow }
             );
 
+
             modelBuilder.Entity<Module>().HasData(
                 new Module { Id = Guid.NewGuid(), Name = "Functions", Description = "Intro to Functions", Start = DateTime.UtcNow, End = DateTime.UtcNow.AddMonths(1), CourseId = course1Id},
                 new Module { Id = Guid.NewGuid(), Name = "Polynomials", Description = "Intro to Polynomials", Start = DateTime.UtcNow.AddMonths(1), End = DateTime.UtcNow.AddMonths(2), CourseId = course1Id },
@@ -39,5 +40,8 @@ namespace LMS.API.Data
 
 
         }
+        public DbSet<ActivityType> ActivityType { get; set; } 
+
+        
     }
 }
