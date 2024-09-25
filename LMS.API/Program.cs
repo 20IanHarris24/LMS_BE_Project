@@ -23,7 +23,16 @@ public class Program
         builder.Services.AddDbContext<DatabaseContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseContext") ?? throw new InvalidOperationException("Connection string 'DatabaseContext' not found.")));
         builder.Services.AddAutoMapper(typeof(MapperManager));
-        builder.Services.AddControllers().AddNewtonsoftJson();
+        
+
+
+        // Add services to the container.
+        builder.Services.AddControllers(configure =>
+        {
+            //configure.ReturnHttpNotAcceptable = true;
+            //var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().RequireRole("Teacher").Build();
+            //configure.Filters.Add(new AuthorizeFilter(policy));
+        }).AddNewtonsoftJson();
         builder.Services.ConfigureCors();
         builder.Services.ConfigureServices();
         builder.Services.AddEndpointsApiExplorer();
