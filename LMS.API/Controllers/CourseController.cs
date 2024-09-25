@@ -49,19 +49,34 @@ namespace LMS.API.Controllers
         [HttpGet("{user_id}")]
         public async Task<ActionResult<CourseDto>> GetCourse(string user_id)
         {
-            var user = await _context.Users.Where(u => u.Id == user_id).Select(u => new { u.CourseId }).FirstOrDefaultAsync();
+            var user = await _context.Users
+                .Where(u => u.Id == user_id)
+                .Select(u => new { u.CourseId })
+                .FirstOrDefaultAsync();
+
             if (user == null)
             {
-                return NotFound();
+                return NotFound("User not found.");
             }
-            if (user.CourseId == null || !user.CourseId.HasValue)
+
+            if (!user.CourseId.HasValue)
             {
-                return NotFound();
+                return NotFound("User does not have an assigned course.");
             }
-            var course = await _context.Courses.Include(c => c.Modules).FirstOrDefaultAsync(c => c.Id == user.CourseId);
+
+            var course = await _context.Courses
+                .Include(c => c.Modules)
+                .FirstOrDefaultAsync(c => c.Id == user.CourseId);
+
+            if (course == null)
+            {
+                return NotFound("Course not found.");
+            }
+
             var courseDto = _mapper.Map<CourseDto>(course);
             return Ok(courseDto);
         }
+
 
 
         [HttpDelete("{id}")]

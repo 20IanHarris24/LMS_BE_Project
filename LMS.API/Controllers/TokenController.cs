@@ -6,25 +6,33 @@ using Microsoft.AspNetCore.Mvc;
 namespace LMS.API.Controllers
 {
     [Route("api/token")]
-
     [ApiController]
-
-    public class TokenController(IAuthService authenticationService) : ControllerBase
-
+    public class TokenController : ControllerBase
     {
+        private readonly IAuthService _authenticationService;
 
-        [HttpPost("refresh")]
-
-        public async Task<ActionResult<TokenDto>> RefreshToken(TokenDto token)
-
+        public TokenController(IAuthService authenticationService)
         {
-
-            TokenDto tokenDto = await authenticationService.RefreshTokenAsync(token);
-
-            return Ok(tokenDto);
-
+            _authenticationService = authenticationService;
         }
 
-    }
+        [HttpPost("refresh")]
+        public async Task<ActionResult<TokenDto>> RefreshToken(TokenDto token)
+        {
+            if (token == null)
+            {
+                return BadRequest("Invalid client request: token cannot be null.");
+            }
 
+            try
+            {
+                TokenDto tokenDto = await _authenticationService.RefreshTokenAsync(token);
+                return Ok(tokenDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+    }
 }

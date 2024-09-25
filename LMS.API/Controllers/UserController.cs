@@ -30,18 +30,23 @@ namespace LMS.API.Controllers
         public async Task<ActionResult<IEnumerable<UserForListDto>>> GetUsers()
         {
             var users = await _userManager.Users.ToListAsync();
-            var userDtos = new List<UserForListDto>();
 
-            foreach (var user in users)
+            if (users == null || !users.Any())
+            {
+                return NotFound("No users found.");
+            }
+
+            var userDtos = await Task.WhenAll(users.Select(async user =>
             {
                 var roles = await _userManager.GetRolesAsync(user);
                 var userDto = _mapper.Map<UserForListDto>(user);
-                userDto.Role = roles.FirstOrDefault();
-                userDtos.Add(userDto);
-            }
+                userDto.Role = roles.FirstOrDefault(); // Assign the first role or null if none exists
+                return userDto;
+            }));
 
             return Ok(userDtos);
         }
+
         [Authorize(Roles = "Teacher")]
         [HttpGet("{id}")]
         public async Task<ActionResult<UserForListDto>> GetUser(string id)

@@ -199,20 +199,23 @@ public class AuthService : IAuthService
                 Password = "Password123!",
                 Email = "teacher@example.com",
                 Role = "Teacher"
+                
             },
             new UserForRegistrationDto
             {
                 UserName = "Student",
                 Password = "Password123!",
                 Email = "student1@example.com",
-                Role = "Student"
+                Role = "Student",
+                CourseID = "20366fec-fb4a-4397-ab41-073ef2a788f3"
             },
             new UserForRegistrationDto
             {
                 UserName = "Student2",
                 Password = "Password123!",
                 Email = "student2@example.com",
-                Role = "Student"
+                Role = "Student",
+                CourseID = "20366fec-fb4a-4397-ab41-073ef2a788f3"
             }
         };
 
