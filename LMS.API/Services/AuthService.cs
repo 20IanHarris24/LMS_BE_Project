@@ -207,7 +207,7 @@ public class AuthService : IAuthService
                 Password = "Password123!",
                 Email = "student1@example.com",
                 Role = "Student",
-                CourseID = "20366fec-fb4a-4397-ab41-073ef2a788f3"
+                CourseID = "a767cdee-e833-427a-9349-3ee71cca8a39"
             },
             new UserForRegistrationDto
             {
@@ -215,7 +215,7 @@ public class AuthService : IAuthService
                 Password = "Password123!",
                 Email = "student2@example.com",
                 Role = "Student",
-                CourseID = "20366fec-fb4a-4397-ab41-073ef2a788f3"
+                CourseID = "6f01e571-41f0-4789-8059-422ae07d736e"
             }
         };
 
