@@ -37,7 +37,7 @@ namespace LMS.API.Controllers
 
         // GET: api/Modules/5
         [HttpGet("courseid/{id}")]
-        public async Task<ActionResult<IEnumerable<ModuleManipulationDto>>> GetModule(Guid id)
+        public async Task<ActionResult<IEnumerable<ModuleDto>>> GetModule(Guid id)
         {
             var moduleObjc = await _context.Modules
                                            .Where(md => md.CourseId == id)
@@ -48,11 +48,11 @@ namespace LMS.API.Controllers
                 return NotFound();
             }
 
-            List<ModuleManipulationDto> dto = new();
+            List<ModuleDto> dto = new();
 
             foreach (var module in moduleObjc)
             {
-                var dtoObj = _mapper.Map<ModuleManipulationDto>(module);
+                var dtoObj = _mapper.Map<ModuleDto>(module);
                 dto.Add(dtoObj);
             }
 
