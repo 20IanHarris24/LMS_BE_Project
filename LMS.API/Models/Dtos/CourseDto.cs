@@ -8,6 +8,6 @@ namespace LMS.API.Models.Dtos
         [Required] public string? Name { get; init; }
         [Required] public string? Description { get; init; }
         [Required] public DateTime Start {  get; init; }
-        public required IEnumerable<ModuleManipulationDto> Modules { get; init; }
+        public required IEnumerable<ModuleDto> Modules { get; init; }
     }
 }
