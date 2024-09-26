@@ -48,7 +48,7 @@ namespace LMS.API.Controllers
         [HttpGet("moduleid/{id}")]
         public async Task<ActionResult<IEnumerable<ActivityListDto>>> GetActivityByModuleId(Guid id)
         {
-            var actList =  await _context.Activities.Where(act => act.ModuleId == id).ToListAsync();
+            var actList =  await _context.Activities.Where(act => act.ModuleId == id).Include(act => act.Type).ToListAsync();
 
             if (actList == null) return NotFound();
 
