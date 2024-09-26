@@ -45,18 +45,22 @@ namespace LMS.API.Controllers
         }
 
         // GET: api/Activities/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<Activity>> GetActivity(Guid id)
-        //{
-        //    var activity = await _context.Activitys.FindAsync(id);
+        [HttpGet("moduleid/{id}")]
+        public async Task<ActionResult<IEnumerable<ActivityListDto>>> GetActivityByModuleId(Guid id)
+        {
+            var actList =  await _context.Activities.Where(act => act.ModuleId == id).ToListAsync();
 
-        //    if (activity == null)
-        //    {
-        //        return NotFound();
-        //    }
+            if (actList == null) return NotFound();
 
-        //    return activity;
-        //}
+            List<ActivityListDto> dto = new();
+            foreach (var activity in actList)
+            {
+                var dtoObj = _mapper.Map<ActivityListDto>(activity);
+                dto.Add(dtoObj);
+            }
+
+            return dto;
+        }
 
         // PUT: api/Activities/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
