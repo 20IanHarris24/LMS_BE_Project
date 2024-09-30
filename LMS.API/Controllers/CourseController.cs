@@ -77,6 +77,23 @@ namespace LMS.API.Controllers
             return Ok(courseDto);
         }
 
+        [Authorize(Roles = "Teacher")]
+        [HttpGet("getCourseById/{id}")]
+        public async Task<ActionResult<CourseDto>> GetCourseById(string id)
+        {
+            var course = await _context.Courses
+                .Include(c => c.Modules)
+                .FirstOrDefaultAsync(c => c.Id.ToString() == id);
+
+            if (course == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            var courseDto = _mapper.Map<CourseDto>(course);
+            return Ok(courseDto);
+        }
+
 
 
         [HttpDelete("{id}")]
