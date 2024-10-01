@@ -128,5 +128,35 @@ namespace LMS.API.Controllers
             return Ok(_mapper.Map<CourseForUpdateDto>(course));
 
         }
+
+        [HttpGet("usercourses")]
+        public async Task<ActionResult<IEnumerable<UserCourseDto>>> GetUsersWithCourses()
+        {
+            try
+            {
+                var users = await _context.Users.ToListAsync();
+                var courses = await _context.Courses.ToListAsync();
+
+                var courseMap = courses.ToDictionary(course => course.Id, course => course.Name);
+
+                var userCourseDtos = users.Select(user => new UserCourseDto
+                {
+                    UserName = user.UserName,
+                    CourseName = user.CourseId.HasValue && courseMap.TryGetValue(user.CourseId.Value, out var courseName)
+                        ? courseName
+                        : "No Course Assigned"
+                }).ToList();
+
+                return Ok(userCourseDtos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while fetching users and courses.");
+            }
+        }
+
+
+
+
     }
 }
