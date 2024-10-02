@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LMS.API.Migrations
 {
     /// <inheritdoc />
-    public partial class new_mig1 : Migration
+    public partial class new_mig : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -249,8 +249,8 @@ namespace LMS.API.Migrations
                 columns: new[] { "Id", "Description", "End", "Name", "Start" },
                 values: new object[,]
                 {
-                    { new Guid("6f01e571-41f0-4789-8059-422ae07d736e"), "Intro to Math", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Mathematics 101", new DateTime(2024, 10, 2, 14, 41, 21, 89, DateTimeKind.Utc).AddTicks(6474) },
-                    { new Guid("a767cdee-e833-427a-9349-3ee71cca8a39"), "Intro to Physics", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Physics 101", new DateTime(2024, 10, 2, 14, 41, 21, 89, DateTimeKind.Utc).AddTicks(6476) }
+                    { new Guid("6f01e571-41f0-4789-8059-422ae07d736e"), "Intro to Math", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Mathematics 101", new DateTime(2024, 10, 2, 17, 27, 29, 869, DateTimeKind.Utc).AddTicks(3136) },
+                    { new Guid("a767cdee-e833-427a-9349-3ee71cca8a39"), "Intro to Physics", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Physics 101", new DateTime(2024, 10, 2, 17, 27, 29, 869, DateTimeKind.Utc).AddTicks(3138) }
                 });
 
             migrationBuilder.InsertData(
@@ -258,10 +258,10 @@ namespace LMS.API.Migrations
                 columns: new[] { "Id", "CourseId", "Description", "End", "Name", "Start" },
                 values: new object[,]
                 {
-                    { new Guid("10241cef-309d-4a76-a2e7-c4fe49ffcad8"), new Guid("6f01e571-41f0-4789-8059-422ae07d736e"), "Intro to Functions", new DateTime(2024, 11, 2, 14, 41, 21, 89, DateTimeKind.Utc).AddTicks(6617), "Functions", new DateTime(2024, 10, 2, 14, 41, 21, 89, DateTimeKind.Utc).AddTicks(6615) },
-                    { new Guid("11f16ec7-ac6e-4e18-a87e-6cc826daae95"), new Guid("6f01e571-41f0-4789-8059-422ae07d736e"), "Intro to Polynomials", new DateTime(2024, 12, 2, 14, 41, 21, 89, DateTimeKind.Utc).AddTicks(6625), "Polynomials", new DateTime(2024, 11, 2, 14, 41, 21, 89, DateTimeKind.Utc).AddTicks(6624) },
-                    { new Guid("8cc119ac-fe81-4f3e-afe3-0a7ea68b19c6"), new Guid("a767cdee-e833-427a-9349-3ee71cca8a39"), "Intro to Vektors", new DateTime(2024, 11, 2, 14, 41, 21, 89, DateTimeKind.Utc).AddTicks(6627), "Vektors", new DateTime(2024, 10, 2, 14, 41, 21, 89, DateTimeKind.Utc).AddTicks(6627) },
-                    { new Guid("a74cb72d-dca2-4ad3-84a5-ab9ce98547a1"), new Guid("a767cdee-e833-427a-9349-3ee71cca8a39"), "Intro to Kinematics", new DateTime(2024, 12, 2, 14, 41, 21, 89, DateTimeKind.Utc).AddTicks(6629), "Kimenatics", new DateTime(2024, 11, 2, 14, 41, 21, 89, DateTimeKind.Utc).AddTicks(6629) }
+                    { new Guid("17a4e6bd-dc57-47fb-9843-f2c01192520c"), new Guid("a767cdee-e833-427a-9349-3ee71cca8a39"), "Intro to Vektors", new DateTime(2024, 11, 2, 17, 27, 29, 869, DateTimeKind.Utc).AddTicks(3305), "Vektors", new DateTime(2024, 10, 2, 17, 27, 29, 869, DateTimeKind.Utc).AddTicks(3305) },
+                    { new Guid("27c64684-3c5f-4b60-a567-eb1611f54ca8"), new Guid("6f01e571-41f0-4789-8059-422ae07d736e"), "Intro to Functions", new DateTime(2024, 11, 2, 17, 27, 29, 869, DateTimeKind.Utc).AddTicks(3295), "Functions", new DateTime(2024, 10, 2, 17, 27, 29, 869, DateTimeKind.Utc).AddTicks(3292) },
+                    { new Guid("43a75c47-4f68-4b19-9117-28768c8fca6c"), new Guid("a767cdee-e833-427a-9349-3ee71cca8a39"), "Intro to Kinematics", new DateTime(2024, 12, 2, 17, 27, 29, 869, DateTimeKind.Utc).AddTicks(3307), "Kimenatics", new DateTime(2024, 11, 2, 17, 27, 29, 869, DateTimeKind.Utc).AddTicks(3307) },
+                    { new Guid("5f3d56fd-8b39-44ce-943c-2e316532813d"), new Guid("6f01e571-41f0-4789-8059-422ae07d736e"), "Intro to Polynomials", new DateTime(2024, 12, 2, 17, 27, 29, 869, DateTimeKind.Utc).AddTicks(3303), "Polynomials", new DateTime(2024, 11, 2, 17, 27, 29, 869, DateTimeKind.Utc).AddTicks(3302) }
                 });
 
             migrationBuilder.CreateIndex(

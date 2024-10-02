@@ -58,7 +58,7 @@ namespace LMS.API.Controllers
                 await _context.SaveChangesAsync();
                 var result = _mapper.Map<CourseDto>(course);
 
-                return CreatedAtAction(nameof(CreateCourse), new { id = result.Id }, result);
+                return CreatedAtAction(nameof(CreateCourse), new { id = result.id }, result);
             }
             catch (Exception ex)
             {
