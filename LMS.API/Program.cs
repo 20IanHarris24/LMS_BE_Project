@@ -11,11 +11,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace LMS.API;
 
 public class Program
 {
+
     public static async Task Main(string[] args) // Make Main async
     {
         var builder = WebApplication.CreateBuilder(args);
@@ -23,16 +25,15 @@ public class Program
         builder.Services.AddDbContext<DatabaseContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DatabaseContext") ?? throw new InvalidOperationException("Connection string 'DatabaseContext' not found.")));
         builder.Services.AddAutoMapper(typeof(MapperManager));
-        
+
 
 
         // Add services to the container.
-        builder.Services.AddControllers(configure =>
-        {
-            //configure.ReturnHttpNotAcceptable = true;
-            //var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().RequireRole("Teacher").Build();
-            //configure.Filters.Add(new AuthorizeFilter(policy));
-        }).AddNewtonsoftJson();
+        builder.Services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
         builder.Services.ConfigureCors();
         builder.Services.ConfigureServices();
         builder.Services.AddEndpointsApiExplorer();

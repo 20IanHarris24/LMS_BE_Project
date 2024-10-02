@@ -48,19 +48,26 @@ namespace LMS.API.Controllers
         [HttpGet("moduleid/{id}")]
         public async Task<ActionResult<IEnumerable<ActivityListDto>>> GetActivityByModuleId(Guid id)
         {
-            var actList =  await _context.Activities.Where(act => act.ModuleId == id).Include(act => act.Type).ToListAsync();
-
-            if (actList == null) return NotFound();
-
-            List<ActivityListDto> dto = new();
-            foreach (var activity in actList)
+            try
             {
-                var dtoObj = _mapper.Map<ActivityListDto>(activity);
-                dto.Add(dtoObj);
-            }
+                var actList = await _context.Activities
+                    .Where(act => act.ModuleId == id)
+                    .Include(act => act.Type)
+                    .AsNoTracking()
+                    .ToListAsync();
 
-            return dto;
+                if (actList == null || !actList.Any())
+                    return NotFound("No activities found for the specified module.");
+
+                List<ActivityListDto> dto = _mapper.Map<List<ActivityListDto>>(actList);
+                return dto;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error occurred while processing the request.");
+            }
         }
+
 
         // PUT: api/Activities/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
