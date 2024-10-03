@@ -41,6 +41,7 @@ namespace LMS.API.Controllers
         {
             var moduleObjc = await _context.Modules
                                            .Where(md => md.CourseId == id)
+                                           .Include(md => md.Activities)
                                            .ToListAsync();
 
             if (moduleObjc == null)
