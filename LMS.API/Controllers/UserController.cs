@@ -31,18 +31,19 @@ namespace LMS.API.Controllers
         {
             var users = await _userManager.Users.ToListAsync();
 
-            if (users == null || !users.Any())
+            if (users.Count == 0)
             {
                 return NotFound("No users found.");
             }
 
-            var userDtos = await Task.WhenAll(users.Select(async user =>
-            {
-                var roles = await _userManager.GetRolesAsync(user);
-                var userDto = _mapper.Map<UserForListDto>(user);
-                userDto.Role = roles.FirstOrDefault(); // Assign the first role or null if none exists
-                return userDto;
-            }));
+            var userDtos = new List<UserForListDto>();
+            foreach (var user in users) {
+                {
+                    var roles = await _userManager.GetRolesAsync(user);
+                    var userDto = _mapper.Map<UserForListDto>(user);
+                    userDto.Role = roles.FirstOrDefault(); // Assign the first role or null if none exists
+                    userDtos.Add(userDto);
+                }};
 
             return Ok(userDtos);
         }

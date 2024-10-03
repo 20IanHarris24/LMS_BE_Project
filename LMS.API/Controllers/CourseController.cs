@@ -30,21 +30,43 @@ namespace LMS.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetCourses()
         {
-            var courses = await _context.Set<Course>().Include(c => c.Modules).ToListAsync();
-            var courseDtos = _mapper.Map<IEnumerable<CourseDto>>(courses);
+            try
+            {
+                var courses = await _context.Courses.ToListAsync();
+                var courseDtos = _mapper.Map<List<CourseDto>>(courses);
 
-            return Ok(courseDtos);
+                return Ok(courseDtos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
         [Authorize(Roles = "Teacher")]
         [HttpPost]
-        public async Task<ActionResult<CourseDto>> CreateCourse(CourseDto courseDto)
+        public async Task<ActionResult<CourseDto>> CreateCourse([FromBody] CourseDto courseDto)
         {
-            var course = _mapper.Map<Course>(courseDto);
-            _context.Set<Course>().Add(course);
-            await _context.SaveChangesAsync();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-            return Ok(_mapper.Map<CourseDto>(course));
+            try
+            {
+                var course = _mapper.Map<Course>(courseDto);
+                _context.Set<Course>().Add(course);
+                await _context.SaveChangesAsync();
+                var result = _mapper.Map<CourseDto>(course);
+
+                return CreatedAtAction(nameof(CreateCourse), new { id = result.id }, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
+
+
         [Authorize(Roles = "Teacher,Student")]
         [HttpGet("{user_id}")]
         public async Task<ActionResult<CourseDto>> GetCourse(string user_id)
@@ -71,6 +93,23 @@ namespace LMS.API.Controllers
             if (course == null)
             {
                 return NotFound("Course not found.");
+            }
+
+            var courseDto = _mapper.Map<CourseDto>(course);
+            return Ok(courseDto);
+        }
+
+        [Authorize(Roles = "Teacher")]
+        [HttpGet("getCourseById/{id}")]
+        public async Task<ActionResult<CourseDto>> GetCourseById(string id)
+        {
+            var course = await _context.Courses
+                .Include(c => c.Modules)
+                .FirstOrDefaultAsync(c => c.Id.ToString() == id);
+
+            if (course == null)
+            {
+                return NotFound("User not found.");
             }
 
             var courseDto = _mapper.Map<CourseDto>(course);
@@ -111,5 +150,35 @@ namespace LMS.API.Controllers
             return Ok(_mapper.Map<CourseForUpdateDto>(course));
 
         }
+
+        [HttpGet("usercourses")]
+        public async Task<ActionResult<IEnumerable<UserCourseDto>>> GetUsersWithCourses()
+        {
+            try
+            {
+                var users = await _context.Users.ToListAsync();
+                var courses = await _context.Courses.ToListAsync();
+
+                var courseMap = courses.ToDictionary(course => course.Id, course => course.Name);
+
+                var userCourseDtos = users.Select(user => new UserCourseDto
+                {
+                    UserName = user.UserName,
+                    CourseName = user.CourseId.HasValue && courseMap.TryGetValue(user.CourseId.Value, out var courseName)
+                        ? courseName
+                        : "No Course Assigned"
+                }).ToList();
+
+                return Ok(userCourseDtos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while fetching users and courses.");
+            }
+        }
+
+
+
+
     }
 }

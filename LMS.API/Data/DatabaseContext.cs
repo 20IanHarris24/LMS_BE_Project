@@ -21,8 +21,8 @@ namespace LMS.API.Data
             base.OnModelCreating(modelBuilder);
 
             // Seed Courses
-            var course1Id = Guid.NewGuid();
-            var course2Id = Guid.NewGuid();
+            var course1Id = Guid.Parse("6f01e571-41f0-4789-8059-422ae07d736e");
+            var course2Id = Guid.Parse("a767cdee-e833-427a-9349-3ee71cca8a39");
 
             modelBuilder.Entity<Course>().HasData(
                 new Course { Id = course1Id, Name = "Mathematics 101", Description = "Intro to Math", Start = DateTime.UtcNow },

@@ -6,6 +6,6 @@ public class ApplicationUser : IdentityUser
 {
     public string? RefreshToken { get; set; }
     public DateTime RefreshTokenExpireTime { get; set; }
-    public Guid? CourseId { get; set; } = Guid.Empty;
+    public Guid? CourseId { get; set; } 
     public Course? Course { get; set; }
 }
