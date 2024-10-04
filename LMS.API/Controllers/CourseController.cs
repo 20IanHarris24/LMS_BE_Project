@@ -32,7 +32,7 @@ namespace LMS.API.Controllers
         {
             try
             {
-                var courses = await _context.Courses.ToListAsync();
+                var courses = await _context.Courses.Include(c => c.Modules).ToListAsync();
                 var courseDtos = _mapper.Map<List<CourseDto>>(courses);
 
                 return Ok(courseDtos);
