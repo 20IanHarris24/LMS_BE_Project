@@ -33,7 +33,7 @@ namespace LMS.API.Controllers
         public async Task<ActionResult<IEnumerable<ActivityListDto>>> GetActivities()
         {
             var activitiesList = await _context.Activities
-                .Include(act => act.Type)
+                .Include(act => act.ActivityType)
                 .ToListAsync();
 
             List<ActivityListDto> dto = new();
@@ -50,23 +50,32 @@ namespace LMS.API.Controllers
         {
             try
             {
+                // Fetch activities for the specified module
                 var actList = await _context.Activities
                     .Where(act => act.ModuleId == id)
-                    .Include(act => act.Type)
+                    .Include(act => act.ActivityType)
                     .AsNoTracking()
                     .ToListAsync();
 
-                if (actList == null || !actList.Any())
+                // Check if any activities were found
+                if (!actList.Any())
+                {
                     return NotFound("No activities found for the specified module.");
+                }
 
-                List<ActivityListDto> dto = _mapper.Map<List<ActivityListDto>>(actList);
-                return dto;
+                // Map activities to DTO
+                var dto = _mapper.Map<List<ActivityListDto>>(actList);
+                return Ok(dto); // Explicitly return OK with the DTO
             }
             catch (Exception ex)
             {
+                // Log the exception (implement logging as needed)
+                // _logger.LogError(ex, "Error fetching activities for module {ModuleId}", id);
+
                 return StatusCode(500, "Internal server error occurred while processing the request.");
             }
         }
+
 
 
         // PUT: api/Activities/5

@@ -9,7 +9,7 @@
         public DateTime? End { get; set; }
 
         public Guid TypeId { get; set; }
-        public ActivityType? Type { get; set; }
+        public ActivityType? ActivityType { get; set; }
         public Guid ModuleId { get; set; }
         public Module? Module { get; set; }
     }

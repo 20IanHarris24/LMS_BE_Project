@@ -12,7 +12,7 @@ namespace LMS.API.Models.Dtos.Mapper
             
             CreateMap<Activity, ActivityListDto>()
                 .ForMember(dest => dest.ActivityType, opt => 
-                                                      opt.MapFrom (src => $"{src.Type!.Name}"));
+                                                      opt.MapFrom (src => $"{src.ActivityType!.Name}"));
 
 
             CreateMap<ActivityType, ActivityTypeDto>().ReverseMap();

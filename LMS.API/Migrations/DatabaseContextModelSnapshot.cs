@@ -28,6 +28,9 @@ namespace LMS.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("ActivityTypeId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -48,9 +51,9 @@ namespace LMS.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ModuleId");
+                    b.HasIndex("ActivityTypeId");
 
-                    b.HasIndex("TypeId");
+                    b.HasIndex("ModuleId");
 
                     b.ToTable("Activities");
                 });
@@ -172,14 +175,14 @@ namespace LMS.API.Migrations
                             Id = new Guid("6f01e571-41f0-4789-8059-422ae07d736e"),
                             Description = "Intro to Math",
                             Name = "Mathematics 101",
-                            Start = new DateTime(2024, 10, 4, 14, 9, 1, 885, DateTimeKind.Utc).AddTicks(1525)
+                            Start = new DateTime(2024, 10, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6487)
                         },
                         new
                         {
                             Id = new Guid("a767cdee-e833-427a-9349-3ee71cca8a39"),
                             Description = "Intro to Physics",
                             Name = "Physics 101",
-                            Start = new DateTime(2024, 10, 4, 14, 9, 1, 885, DateTimeKind.Utc).AddTicks(1528)
+                            Start = new DateTime(2024, 10, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6489)
                         });
                 });
 
@@ -213,39 +216,39 @@ namespace LMS.API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("dd166643-1aaf-4c1f-a62c-3cd1e3f6ea4d"),
+                            Id = new Guid("7f132efd-4e0f-4a7a-9329-94ae9737e8ef"),
                             CourseId = new Guid("6f01e571-41f0-4789-8059-422ae07d736e"),
                             Description = "Intro to Functions",
-                            End = new DateTime(2024, 11, 4, 14, 9, 1, 885, DateTimeKind.Utc).AddTicks(1709),
+                            End = new DateTime(2024, 11, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6672),
                             Name = "Functions",
-                            Start = new DateTime(2024, 10, 4, 14, 9, 1, 885, DateTimeKind.Utc).AddTicks(1706)
+                            Start = new DateTime(2024, 10, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6670)
                         },
                         new
                         {
-                            Id = new Guid("31dbeeb7-cfd7-42ea-b6be-72ffd9d59444"),
+                            Id = new Guid("3f22c609-a04e-4281-b05e-009db3769a2e"),
                             CourseId = new Guid("6f01e571-41f0-4789-8059-422ae07d736e"),
                             Description = "Intro to Polynomials",
-                            End = new DateTime(2024, 12, 4, 14, 9, 1, 885, DateTimeKind.Utc).AddTicks(1719),
+                            End = new DateTime(2024, 12, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6684),
                             Name = "Polynomials",
-                            Start = new DateTime(2024, 11, 4, 14, 9, 1, 885, DateTimeKind.Utc).AddTicks(1718)
+                            Start = new DateTime(2024, 11, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6683)
                         },
                         new
                         {
-                            Id = new Guid("0b391a12-1088-4a38-a20b-05d8da5a891b"),
+                            Id = new Guid("7fd5351a-1287-4463-a139-2d724e3a7210"),
                             CourseId = new Guid("a767cdee-e833-427a-9349-3ee71cca8a39"),
                             Description = "Intro to Vektors",
-                            End = new DateTime(2024, 11, 4, 14, 9, 1, 885, DateTimeKind.Utc).AddTicks(1721),
+                            End = new DateTime(2024, 11, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6687),
                             Name = "Vektors",
-                            Start = new DateTime(2024, 10, 4, 14, 9, 1, 885, DateTimeKind.Utc).AddTicks(1721)
+                            Start = new DateTime(2024, 10, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6686)
                         },
                         new
                         {
-                            Id = new Guid("5d156786-983e-4ade-8e2f-fe1f5ae2ed64"),
+                            Id = new Guid("b466d296-fb59-4a64-96f2-c2dc1ba63101"),
                             CourseId = new Guid("a767cdee-e833-427a-9349-3ee71cca8a39"),
                             Description = "Intro to Kinematics",
-                            End = new DateTime(2024, 12, 4, 14, 9, 1, 885, DateTimeKind.Utc).AddTicks(1724),
+                            End = new DateTime(2024, 12, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6689),
                             Name = "Kimenatics",
-                            Start = new DateTime(2024, 11, 4, 14, 9, 1, 885, DateTimeKind.Utc).AddTicks(1723)
+                            Start = new DateTime(2024, 11, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6688)
                         });
                 });
 
@@ -384,21 +387,19 @@ namespace LMS.API.Migrations
 
             modelBuilder.Entity("LMS.API.Models.Entities.Activity", b =>
                 {
+                    b.HasOne("LMS.API.Models.Entities.ActivityType", "ActivityType")
+                        .WithMany()
+                        .HasForeignKey("ActivityTypeId");
+
                     b.HasOne("LMS.API.Models.Entities.Module", "Module")
                         .WithMany("Activities")
                         .HasForeignKey("ModuleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LMS.API.Models.Entities.ActivityType", "Type")
-                        .WithMany()
-                        .HasForeignKey("TypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("ActivityType");
 
                     b.Navigation("Module");
-
-                    b.Navigation("Type");
                 });
 
             modelBuilder.Entity("LMS.API.Models.Entities.ApplicationUser", b =>

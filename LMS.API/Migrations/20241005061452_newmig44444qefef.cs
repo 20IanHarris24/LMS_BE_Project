@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LMS.API.Migrations
 {
     /// <inheritdoc />
-    public partial class @new : Migration
+    public partial class newmig44444qefef : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -224,17 +224,17 @@ namespace LMS.API.Migrations
                     Start = table.Column<DateTime>(type: "datetime2", nullable: true),
                     End = table.Column<DateTime>(type: "datetime2", nullable: true),
                     TypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ActivityTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     ModuleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Activities", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Activities_ActivityType_TypeId",
-                        column: x => x.TypeId,
+                        name: "FK_Activities_ActivityType_ActivityTypeId",
+                        column: x => x.ActivityTypeId,
                         principalTable: "ActivityType",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Activities_Modules_ModuleId",
                         column: x => x.ModuleId,
@@ -248,8 +248,8 @@ namespace LMS.API.Migrations
                 columns: new[] { "Id", "Description", "Name", "Start" },
                 values: new object[,]
                 {
-                    { new Guid("6f01e571-41f0-4789-8059-422ae07d736e"), "Intro to Math", "Mathematics 101", new DateTime(2024, 10, 4, 14, 9, 1, 885, DateTimeKind.Utc).AddTicks(1525) },
-                    { new Guid("a767cdee-e833-427a-9349-3ee71cca8a39"), "Intro to Physics", "Physics 101", new DateTime(2024, 10, 4, 14, 9, 1, 885, DateTimeKind.Utc).AddTicks(1528) }
+                    { new Guid("6f01e571-41f0-4789-8059-422ae07d736e"), "Intro to Math", "Mathematics 101", new DateTime(2024, 10, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6487) },
+                    { new Guid("a767cdee-e833-427a-9349-3ee71cca8a39"), "Intro to Physics", "Physics 101", new DateTime(2024, 10, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6489) }
                 });
 
             migrationBuilder.InsertData(
@@ -257,21 +257,21 @@ namespace LMS.API.Migrations
                 columns: new[] { "Id", "CourseId", "Description", "End", "Name", "Start" },
                 values: new object[,]
                 {
-                    { new Guid("0b391a12-1088-4a38-a20b-05d8da5a891b"), new Guid("a767cdee-e833-427a-9349-3ee71cca8a39"), "Intro to Vektors", new DateTime(2024, 11, 4, 14, 9, 1, 885, DateTimeKind.Utc).AddTicks(1721), "Vektors", new DateTime(2024, 10, 4, 14, 9, 1, 885, DateTimeKind.Utc).AddTicks(1721) },
-                    { new Guid("31dbeeb7-cfd7-42ea-b6be-72ffd9d59444"), new Guid("6f01e571-41f0-4789-8059-422ae07d736e"), "Intro to Polynomials", new DateTime(2024, 12, 4, 14, 9, 1, 885, DateTimeKind.Utc).AddTicks(1719), "Polynomials", new DateTime(2024, 11, 4, 14, 9, 1, 885, DateTimeKind.Utc).AddTicks(1718) },
-                    { new Guid("5d156786-983e-4ade-8e2f-fe1f5ae2ed64"), new Guid("a767cdee-e833-427a-9349-3ee71cca8a39"), "Intro to Kinematics", new DateTime(2024, 12, 4, 14, 9, 1, 885, DateTimeKind.Utc).AddTicks(1724), "Kimenatics", new DateTime(2024, 11, 4, 14, 9, 1, 885, DateTimeKind.Utc).AddTicks(1723) },
-                    { new Guid("dd166643-1aaf-4c1f-a62c-3cd1e3f6ea4d"), new Guid("6f01e571-41f0-4789-8059-422ae07d736e"), "Intro to Functions", new DateTime(2024, 11, 4, 14, 9, 1, 885, DateTimeKind.Utc).AddTicks(1709), "Functions", new DateTime(2024, 10, 4, 14, 9, 1, 885, DateTimeKind.Utc).AddTicks(1706) }
+                    { new Guid("3f22c609-a04e-4281-b05e-009db3769a2e"), new Guid("6f01e571-41f0-4789-8059-422ae07d736e"), "Intro to Polynomials", new DateTime(2024, 12, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6684), "Polynomials", new DateTime(2024, 11, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6683) },
+                    { new Guid("7f132efd-4e0f-4a7a-9329-94ae9737e8ef"), new Guid("6f01e571-41f0-4789-8059-422ae07d736e"), "Intro to Functions", new DateTime(2024, 11, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6672), "Functions", new DateTime(2024, 10, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6670) },
+                    { new Guid("7fd5351a-1287-4463-a139-2d724e3a7210"), new Guid("a767cdee-e833-427a-9349-3ee71cca8a39"), "Intro to Vektors", new DateTime(2024, 11, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6687), "Vektors", new DateTime(2024, 10, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6686) },
+                    { new Guid("b466d296-fb59-4a64-96f2-c2dc1ba63101"), new Guid("a767cdee-e833-427a-9349-3ee71cca8a39"), "Intro to Kinematics", new DateTime(2024, 12, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6689), "Kimenatics", new DateTime(2024, 11, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6688) }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Activities_ActivityTypeId",
+                table: "Activities",
+                column: "ActivityTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Activities_ModuleId",
                 table: "Activities",
                 column: "ModuleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Activities_TypeId",
-                table: "Activities",
-                column: "TypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
