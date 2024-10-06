@@ -1,5 +1,7 @@
-﻿using LMS.API.Models.Dtos;
+﻿using LMS.API.Data;
+using LMS.API.Models.Dtos;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace LMS.API.Service.Contracts;
 
@@ -10,5 +12,6 @@ public interface IAuthService
     Task<IdentityResult> RegisterUserAsync(UserForRegistrationDto userForRegistration);
     Task<bool> ValidateUserAsync(UserForAuthenticationDto user);
 
-    Task SeedUsersAsync();
+    Task SeedUsersAsync(DatabaseContext db);
+    
 }
