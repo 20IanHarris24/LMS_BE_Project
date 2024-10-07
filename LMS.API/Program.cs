@@ -8,6 +8,7 @@ using LMS.API.Services; // Make sure to include this namespace
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -86,6 +87,7 @@ public class Program
         {
             app.UseSwagger();
             app.UseSwaggerUI();
+            
         }
 
         app.UseHttpsRedirection();
@@ -95,14 +97,19 @@ public class Program
 
         app.MapControllers();
 
+        //Seeding
         using (var scope = app.Services.CreateScope())
         {
             var services = scope.ServiceProvider;
+            var context = services.GetRequiredService<DatabaseContext>();
+            //await context.Database.EnsureDeletedAsync(); //commented out this line after first run when empty database created) 
+            //await context.Database.MigrateAsync(); //commented out after the first dataseed run (when empty database created) 
 
             try
             {
+                await LmsSeedData.InitAsync(context);  //Seed info for Courses/Modules/Activities/Activity Types
                 var authService = services.GetRequiredService<IAuthService>();
-                await authService.SeedUsersAsync();
+                await authService.SeedUsersAsync(context); //Seed App users
             }
             catch (Exception ex)
             {
@@ -111,6 +118,7 @@ public class Program
             }
         }
 
+      
         await app.RunAsync();
     }
 }

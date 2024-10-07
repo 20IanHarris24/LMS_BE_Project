@@ -1,10 +1,16 @@
 ﻿using AutoMapper;
+using Bogus;
+using LMS.API.Data;
 using LMS.API.Models.Dtos;
 using LMS.API.Models.Entities;
 using LMS.API.Service.Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Writers;
+using NuGet.Protocol.Plugins;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -18,17 +24,19 @@ public class AuthService : IAuthService
     private readonly RoleManager<IdentityRole> roleManager;
     private ApplicationUser? user;
     private readonly IMapper mapper;
+    private readonly DatabaseContext db;
 
-    public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, IMapper mapper)
+    public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, IMapper mapper,DatabaseContext db)
     {
         this.userManager = userManager;
         this.configuration = configuration;
         this.roleManager = roleManager;
         this.mapper = mapper;
+        this.db = db;
 
-        SeedUsersAsync().GetAwaiter().GetResult();
+        SeedUsersAsync(db).GetAwaiter().GetResult();
+
     }
-
 
     public async Task<TokenDto> CreateTokenAsync(bool expireTime)
     {
@@ -81,7 +89,7 @@ public class AuthService : IAuthService
             new Claim(ClaimTypes.NameIdentifier, user.Id!),
             //Add more if needed
         };
-        
+
         var roles = userManager.GetRolesAsync(user).Result;
 
         foreach (var role in roles)
@@ -103,11 +111,11 @@ public class AuthService : IAuthService
         return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
 
     }
-        static async Task SeedRoles(RoleManager<IdentityRole> roleManager)
-        {
-            if (!await roleManager.RoleExistsAsync("Teacher")) { await roleManager.CreateAsync(new IdentityRole("Teacher")); }
-            if (!await roleManager.RoleExistsAsync("Student")) { await roleManager.CreateAsync(new IdentityRole("Student")); }
-        }
+    static async Task SeedRoles(RoleManager<IdentityRole> roleManager)
+    {
+        if (!await roleManager.RoleExistsAsync("Teacher")) { await roleManager.CreateAsync(new IdentityRole("Teacher")); }
+        if (!await roleManager.RoleExistsAsync("Student")) { await roleManager.CreateAsync(new IdentityRole("Student")); }
+    }
 
 
 
@@ -116,19 +124,15 @@ public class AuthService : IAuthService
     {
         ArgumentNullException.ThrowIfNull(userForRegistration, nameof(userForRegistration));
 
-        //var user = new ApplicationUser
-        //{
-        //    UserName = userForRegistration.UserName,
-        //    Email = userForRegistration.Email,
-        //};
         var user = mapper.Map<ApplicationUser>(userForRegistration);
+        Console.WriteLine($"Registering user {userForRegistration.UserName} with role {userForRegistration.Role}");
 
         await SeedRoles(roleManager);
         var result = await userManager.CreateAsync(user, userForRegistration.Password!);
 
         if (result.Succeeded)
         {
-            await userManager.AddToRoleAsync(user, userForRegistration.Role!); 
+            await userManager.AddToRoleAsync(user, userForRegistration.Role!);
         }
 
         return result;
@@ -187,39 +191,74 @@ public class AuthService : IAuthService
 
         return principal;
     }
-    public async Task SeedUsersAsync()
+
+
+    
+    public async Task SeedUsersAsync(DatabaseContext db)
     {
+
+        if (await userManager.Users.AnyAsync())
+        {
+            Console.WriteLine("Users already exist. Skipping seeding.");
+            return;  // Exit if users are already present
+        }
+
         await SeedRoles(roleManager);
 
-        var users = new List<UserForRegistrationDto>
+        var courses = await db.Courses.ToListAsync();
+
+        //Generate user (Teacher/Student) attributes randomly
+        var seedUsers = new List<UserForRegistrationDto>();
+        var faker = new Faker();
+        
+        int totalUsers = 125;
+        int totalCourses = courses.Count;
+        int totalTeachers = totalCourses;
+        int totalStudents = totalUsers - totalTeachers;
+        int studentsPerCourse = totalStudents / totalCourses;
+        int remainingStudents = totalStudents % totalCourses;
+
+
+        void AddUser(string role, Guid courseId)
         {
-            new UserForRegistrationDto
+            var fName = faker.Name.FirstName();
+            var lName = faker.Name.LastName();
+            var domainName = faker.Internet.DomainName();
+
+            var user = new UserForRegistrationDto
             {
-                UserName = "Teacher",
+                UserName = $"{fName}",
                 Password = "Password123!",
-                Email = "teacher@example.com",
-                Role = "Teacher"
-                
-            },
-            new UserForRegistrationDto
+                Email = $"{fName}.{lName}@{domainName}",
+                Role = role,
+                CourseID = courseId.ToString()
+            };
+            seedUsers.Add(user);
+        }
+
+
+        foreach (var course in courses)
+        {
+            Console.WriteLine($"Creating teacher for course {course.Id}");
+            AddUser("Teacher", course.Id);
+
+            for (int i = 0; i < studentsPerCourse; i++)
+
             {
-                UserName = "Student",
-                Password = "Password123!",
-                Email = "student1@example.com",
-                Role = "Student",
-                CourseID = "a767cdee-e833-427a-9349-3ee71cca8a39"
-            },
-            new UserForRegistrationDto
-            {
-                UserName = "Student2",
-                Password = "Password123!",
-                Email = "student2@example.com",
-                Role = "Student",
-                CourseID = "6f01e571-41f0-4789-8059-422ae07d736e"
+                AddUser("Student", course.Id);
             }
+
+            if (remainingStudents > 0)
+            {
+                AddUser("Student", course.Id);
+                remainingStudents--;
+            }
+
         };
 
-        foreach (var userDto in users)
+   
+
+        foreach (var userDto in seedUsers)
         {
             var result = await RegisterUserAsync(userDto);
             if (!result.Succeeded)
@@ -228,6 +267,11 @@ public class AuthService : IAuthService
             }
         }
     }
+   
+
+
+
+
 
     public static void ConfigureJwt(IServiceCollection services, IConfiguration configuration)
     {
@@ -253,7 +297,9 @@ public class AuthService : IAuthService
                 RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role" // Set role claim type
             };
         });
-    }
 
+
+    }
+   
 }
 
