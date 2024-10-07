@@ -5,6 +5,7 @@ namespace LMS.API.Models.Dtos
 {
     public record UserForListDto 
     {
+        public Guid Id { get; init; }
         [Required]
         public string? UserName { get; init; }
 
