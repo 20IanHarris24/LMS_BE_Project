@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LMS.API.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240917145348_Entities")]
-    partial class Entities
+    [Migration("20241005061452_newmig44444qefef")]
+    partial class newmig44444qefef
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,56 @@ namespace LMS.API.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("LMS.API.Models.Entities.Activity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ActivityTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("End")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ModuleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Start")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("TypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActivityTypeId");
+
+                    b.HasIndex("ModuleId");
+
+                    b.ToTable("Activities");
+                });
+
+            modelBuilder.Entity("LMS.API.Models.Entities.ActivityType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ActivityType");
+                });
 
             modelBuilder.Entity("LMS.API.Models.Entities.ApplicationUser", b =>
                 {
@@ -36,6 +86,9 @@ namespace LMS.API.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("CourseId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -85,6 +138,8 @@ namespace LMS.API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CourseId");
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -94,6 +149,110 @@ namespace LMS.API.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("LMS.API.Models.Entities.Course", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Start")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Courses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("6f01e571-41f0-4789-8059-422ae07d736e"),
+                            Description = "Intro to Math",
+                            Name = "Mathematics 101",
+                            Start = new DateTime(2024, 10, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6487)
+                        },
+                        new
+                        {
+                            Id = new Guid("a767cdee-e833-427a-9349-3ee71cca8a39"),
+                            Description = "Intro to Physics",
+                            Name = "Physics 101",
+                            Start = new DateTime(2024, 10, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6489)
+                        });
+                });
+
+            modelBuilder.Entity("LMS.API.Models.Entities.Module", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CourseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("End")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Start")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("Modules");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("7f132efd-4e0f-4a7a-9329-94ae9737e8ef"),
+                            CourseId = new Guid("6f01e571-41f0-4789-8059-422ae07d736e"),
+                            Description = "Intro to Functions",
+                            End = new DateTime(2024, 11, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6672),
+                            Name = "Functions",
+                            Start = new DateTime(2024, 10, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6670)
+                        },
+                        new
+                        {
+                            Id = new Guid("3f22c609-a04e-4281-b05e-009db3769a2e"),
+                            CourseId = new Guid("6f01e571-41f0-4789-8059-422ae07d736e"),
+                            Description = "Intro to Polynomials",
+                            End = new DateTime(2024, 12, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6684),
+                            Name = "Polynomials",
+                            Start = new DateTime(2024, 11, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6683)
+                        },
+                        new
+                        {
+                            Id = new Guid("7fd5351a-1287-4463-a139-2d724e3a7210"),
+                            CourseId = new Guid("a767cdee-e833-427a-9349-3ee71cca8a39"),
+                            Description = "Intro to Vektors",
+                            End = new DateTime(2024, 11, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6687),
+                            Name = "Vektors",
+                            Start = new DateTime(2024, 10, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6686)
+                        },
+                        new
+                        {
+                            Id = new Guid("b466d296-fb59-4a64-96f2-c2dc1ba63101"),
+                            CourseId = new Guid("a767cdee-e833-427a-9349-3ee71cca8a39"),
+                            Description = "Intro to Kinematics",
+                            End = new DateTime(2024, 12, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6689),
+                            Name = "Kimenatics",
+                            Start = new DateTime(2024, 11, 5, 6, 14, 51, 938, DateTimeKind.Utc).AddTicks(6688)
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -229,6 +388,43 @@ namespace LMS.API.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("LMS.API.Models.Entities.Activity", b =>
+                {
+                    b.HasOne("LMS.API.Models.Entities.ActivityType", "ActivityType")
+                        .WithMany()
+                        .HasForeignKey("ActivityTypeId");
+
+                    b.HasOne("LMS.API.Models.Entities.Module", "Module")
+                        .WithMany("Activities")
+                        .HasForeignKey("ModuleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ActivityType");
+
+                    b.Navigation("Module");
+                });
+
+            modelBuilder.Entity("LMS.API.Models.Entities.ApplicationUser", b =>
+                {
+                    b.HasOne("LMS.API.Models.Entities.Course", "Course")
+                        .WithMany("Users")
+                        .HasForeignKey("CourseId");
+
+                    b.Navigation("Course");
+                });
+
+            modelBuilder.Entity("LMS.API.Models.Entities.Module", b =>
+                {
+                    b.HasOne("LMS.API.Models.Entities.Course", "Course")
+                        .WithMany("Modules")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -278,6 +474,18 @@ namespace LMS.API.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("LMS.API.Models.Entities.Course", b =>
+                {
+                    b.Navigation("Modules");
+
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("LMS.API.Models.Entities.Module", b =>
+                {
+                    b.Navigation("Activities");
                 });
 #pragma warning restore 612, 618
         }
